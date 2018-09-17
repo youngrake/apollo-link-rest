@@ -6,9 +6,9 @@ import { onError } from 'apollo-link-error';
 import gql, { disableFragmentWarnings } from 'graphql-tag';
 disableFragmentWarnings();
 
-import * as camelCase from 'camelcase';
+import camelCase from 'camelcase';
 const snake_case = require('snake-case');
-import * as fetchMock from 'fetch-mock';
+import fetchMock from 'fetch-mock';
 
 import {
   RestLink,
