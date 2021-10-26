@@ -808,7 +808,7 @@ interface RequestContext {
   typePatcher: RestLink.FunctionalTypePatcher;
   serializers: RestLink.Serializers;
   responseTransformer: RestLink.ResponseTransformer;
-  allowNonStandardBodies: boolean;
+  allowNonStandardBodies?: boolean;
 
   /** An array of the responses from each fetched URL */
   responses: Response[];
@@ -897,7 +897,7 @@ const resolver: Resolver = async (
     fieldNameDenormalizer: linkLevelNameDenormalizer,
     serializers,
     responseTransformer,
-    allowNonStandardBodies, 
+    allowNonStandardBodies,
   } = context;
 
   const fragmentMap = createFragmentMap(fragmentDefinitions);

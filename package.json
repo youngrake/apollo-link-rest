@@ -1,10 +1,11 @@
 {
-  "name": "apollo-link-rest",
+  "name": "@youngrake/apollo-link-rest",
   "version": "0.8.0-beta.0",
   "description": "Query existing REST services with GraphQL",
   "license": "MIT",
   "main": "./lib/bundle.umd.js",
   "module": "./lib/index.js",
+  "MODULE": "https://github.com/youngrake/apollo-link-rest",
   "jsnext:main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "repository": {
