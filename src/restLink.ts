@@ -189,6 +189,8 @@ export namespace RestLink {
      * Parse the response body of an HTTP request into the format that Apollo expects.
      */
     responseTransformer?: ResponseTransformer;
+
+    allowNonStandardBodies?: boolean;
   };
 
   /** @rest(...) Directive Options */
@@ -806,6 +808,7 @@ interface RequestContext {
   typePatcher: RestLink.FunctionalTypePatcher;
   serializers: RestLink.Serializers;
   responseTransformer: RestLink.ResponseTransformer;
+  allowNonStandardBodies: boolean;
 
   /** An array of the responses from each fetched URL */
   responses: Response[];
@@ -894,6 +897,7 @@ const resolver: Resolver = async (
     fieldNameDenormalizer: linkLevelNameDenormalizer,
     serializers,
     responseTransformer,
+    allowNonStandardBodies, 
   } = context;
 
   const fragmentMap = createFragmentMap(fragmentDefinitions);
@@ -971,7 +975,7 @@ const resolver: Resolver = async (
 
   let body = undefined;
   let overrideHeaders: Headers = undefined;
-  if (-1 === ['GET', 'DELETE'].indexOf(method)) {
+  if (-1 === ['GET', 'DELETE'].indexOf(method) || allowNonStandardBodies) {
     // Prepare our body!
     if (!bodyBuilder) {
       // By convention GraphQL recommends mutations having a single argument named "input"
