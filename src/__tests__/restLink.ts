@@ -3060,33 +3060,6 @@ describe('Mutation', () => {
       );
       expect(requestCall[1].body).toEqual(JSON.stringify({ id: '1' }));
     });
-    it('throws when no body input is provided for HTTP methods other than GET or DELETE', async () => {
-      expect.assertions(1);
-
-      const link = new RestLink({ uri: '/api' });
-
-      const createPostMutation = gql`
-        mutation createPost {
-          sendPost @rest(type: "Post", path: "/posts/new", method: "POST") {
-            id
-            title
-          }
-        }
-      `;
-
-      await toPromise<Result>(
-        execute(link, {
-          operationName: 'createPost',
-          query: createPostMutation,
-        }),
-      ).catch(e =>
-        expect(e).toEqual(
-          new Error(
-            '[GraphQL POST mutation using a REST call without a body]. No `input` was detected. Pass bodyKey, or bodyBuilder to the @rest() directive to resolve this.',
-          ),
-        ),
-      );
-    });
     // TODO: Test for BodyBuilder using context
     // TODO: Test for BodyBuilder using @rest
   });

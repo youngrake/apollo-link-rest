@@ -189,8 +189,6 @@ export namespace RestLink {
      * Parse the response body of an HTTP request into the format that Apollo expects.
      */
     responseTransformer?: ResponseTransformer;
-
-    allowNonStandardBodies?: boolean;
   };
 
   /** @rest(...) Directive Options */
@@ -808,8 +806,6 @@ interface RequestContext {
   typePatcher: RestLink.FunctionalTypePatcher;
   serializers: RestLink.Serializers;
   responseTransformer: RestLink.ResponseTransformer;
-  allowNonStandardBodies?: boolean;
-
   /** An array of the responses from each fetched URL */
   responses: Response[];
 }
@@ -897,7 +893,6 @@ const resolver: Resolver = async (
     fieldNameDenormalizer: linkLevelNameDenormalizer,
     serializers,
     responseTransformer,
-    allowNonStandardBodies,
   } = context;
 
   const fragmentMap = createFragmentMap(fragmentDefinitions);
@@ -966,16 +961,22 @@ const resolver: Resolver = async (
     fieldNameDenormalizer: perRequestNameDenormalizer,
     bodySerializer,
   } = directives.rest as RestLink.DirectiveOptions;
+
   if (!method) {
     method = 'GET';
   }
+
   if (!bodyKey) {
     bodyKey = 'input';
   }
 
   let body = undefined;
   let overrideHeaders: Headers = undefined;
-  if (-1 === ['GET', 'DELETE'].indexOf(method) || allowNonStandardBodies) {
+
+  if (
+    allParams.exportVariables[bodyKey] ||
+    (allParams.args && allParams.args[bodyKey])
+  ) {
     // Prepare our body!
     if (!bodyBuilder) {
       // By convention GraphQL recommends mutations having a single argument named "input"
@@ -984,11 +985,6 @@ const resolver: Resolver = async (
       const maybeBody =
         allParams.exportVariables[bodyKey] ||
         (allParams.args && allParams.args[bodyKey]);
-      if (!maybeBody) {
-        throw new Error(
-          `[GraphQL ${method} ${operationType} using a REST call without a body]. No \`${bodyKey}\` was detected. Pass bodyKey, or bodyBuilder to the @rest() directive to resolve this.`,
-        );
-      }
 
       bodyBuilder = (argsWithExport: object) => {
         return maybeBody;
