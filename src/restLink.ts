@@ -973,19 +973,16 @@ const resolver: Resolver = async (
   let body = undefined;
   let overrideHeaders: Headers = undefined;
 
-  if (
+  // By convention GraphQL recommends mutations having a single argument named "input"
+  // https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97
+
+  const maybeBody =
     allParams.exportVariables[bodyKey] ||
-    (allParams.args && allParams.args[bodyKey])
-  ) {
+    (allParams.args && allParams.args[bodyKey]);
+
+  if (maybeBody) {
     // Prepare our body!
     if (!bodyBuilder) {
-      // By convention GraphQL recommends mutations having a single argument named "input"
-      // https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97
-
-      const maybeBody =
-        allParams.exportVariables[bodyKey] ||
-        (allParams.args && allParams.args[bodyKey]);
-
       bodyBuilder = (argsWithExport: object) => {
         return maybeBody;
       };
